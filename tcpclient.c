@@ -1,8 +1,10 @@
+#include "unp.h"
+
 void str_cli(FILE *fp, int sockfd)
 {
     char sendline[MAXLINE], recvline[MAXLINE];
 
-    while(Fgets(sendline, MAXLINE, fp) != NULL)         //read line of text
+    while(fgets(sendline, MAXLINE, fp) != NULL)         //read line of text
     {
         Writen(sockfd, sendline, strlen(sendline));     //send line to server
 

@@ -80,6 +80,13 @@ int Socket(int family, int type, int protocol)
 }
 
 
+void Writen(int fd, void *ptr, size_t nbytes)
+{
+    if (writen(fd, ptr, nbytes) != nbytes)
+        err_sys("writen error");
+}
+
+
 /* Fatal error related to system call
  * Print message and terminate */
 
