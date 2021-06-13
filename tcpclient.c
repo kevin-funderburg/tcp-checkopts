@@ -8,7 +8,7 @@ void str_cli(FILE *fp, int sockfd)
     {
         Writen(sockfd, sendline, strlen(sendline));     //send line to server
 
-        if (Readline(sockfd, recvline, MAXLINE == 0)    //read line echoed from server
+        if (readline(sockfd, recvline, MAXLINE == 0)    //read line echoed from server
             err_quit("str_cli: server terminated prematurely");
 
         Fputs(recvline, stdout);    //write line from server to standard output

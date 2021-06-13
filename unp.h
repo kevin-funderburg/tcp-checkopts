@@ -46,6 +46,10 @@ static  ssize_t my_read(int fd, char *ptr);
 ssize_t readline(int fd, void *vptr, size_t maxlen);
 ssize_t readlinebuf(void **vptrptr);
 
+static int read_cnt;
+static char *read_ptr;
+static char read_buf[MAXLINE];
+
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
     int n;
