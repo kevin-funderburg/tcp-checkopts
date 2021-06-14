@@ -17,6 +17,7 @@ void str_echo(int sockfd)
 
 int main(int argc, char **argv)
 {
+    printf("*** main() ***\n");
     int         listenfd, connfd;
     pid_t       childpid;
     socklen_t   clilen;
@@ -26,23 +27,27 @@ int main(int argc, char **argv)
 
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = hton1(INADDR_ANY);
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
     Bind(listenfd, (SA *) &servaddr, sizeof(servaddr));
 
-    Listen(listenfd, LISTENQ);
+    //Listen(listenfd, LISTENQ);
+    listen(listenfd, LISTENQ);
 
     for( ; ; )
     {
         clilen = sizeof(cliaddr);
         connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
 
-        if ( (childpid = Fork()) == 0) {    //child process
-            Close(listenfd);    //close listening socket
+        //if ( (childpid = Fork()) == 0) {    //child process
+        if ( (childpid = fork()) == 0) {    //child process
+            //Close(listenfd);    //close listening socket
+            close(listenfd);    //close listening socket
             str_echo(connfd);   //process the request
             exit(0);
         }
-        Close(connfd);          //parent closes connected socket
+        //Close(connfd);          //parent closes connected socket
+        close(connfd);          //parent closes connected socket
     }
 }
