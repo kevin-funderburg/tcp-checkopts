@@ -2,7 +2,7 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* CPU, vendor, and operating system */
-#define CPU_VENDOR_OS "i686-pc-linux-gnu"
+#define CPU_VENDOR_OS "i386-apple-darwin20.3.0"
 
 /* Define to 1 if <netdb.h> defines struct addrinfo */
 #define HAVE_ADDRINFO_STRUCT 1
@@ -38,7 +38,7 @@
 #define HAVE_GETHOSTBYNAME2 1
 
 /* Define to 1 if you have the `gethostbyname_r' function. */
-#define HAVE_GETHOSTBYNAME_R 1
+/* #undef HAVE_GETHOSTBYNAME_R */
 
 /* Define to 1 if you have the `gethostname' function. */
 #define HAVE_GETHOSTNAME 1
@@ -71,7 +71,7 @@
 #define HAVE_IF_NAMETOINDEX_PROTO 1
 
 /* Define to 1 if you have the `inet6_rth_init' function. */
-/* #undef HAVE_INET6_RTH_INIT */
+#define HAVE_INET6_RTH_INIT 1
 
 /* Define to 1 if you have the `inet_aton' function. */
 #define HAVE_INET_ATON 1
@@ -86,10 +86,10 @@
 #define HAVE_INET_PTON_PROTO 1
 
 /* Define to 1 if you have the `kevent' function. */
-/* #undef HAVE_KEVENT */
+#define HAVE_KEVENT 1
 
 /* Define to 1 if you have the `kqueue' function. */
-/* #undef HAVE_KQUEUE */
+#define HAVE_KQUEUE 1
 
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 /* #undef HAVE_LIBNSL */
@@ -101,7 +101,7 @@
 /* #undef HAVE_LIBPTHREADS */
 
 /* Define to 1 if you have the `resolv' library (-lresolv). */
-/* #undef HAVE_LIBRESOLV */
+#define HAVE_LIBRESOLV 1
 
 /* Define to 1 if you have the `xti' library (-lxti). */
 /* #undef HAVE_LIBXTI */
@@ -125,7 +125,7 @@
 #define HAVE_NETINET_IN_H 1
 
 /* Define to 1 if you have the <net/if_dl.h> header file. */
-/* #undef HAVE_NET_IF_DL_H */
+#define HAVE_NET_IF_DL_H 1
 
 /* Define to 1 if you have the `poll' function. */
 #define HAVE_POLL 1
@@ -137,7 +137,7 @@
 #define HAVE_PSELECT 1
 
 /* define if pselect prototype is in <sys/stat.h> */
-/* #undef HAVE_PSELECT_PROTO */
+#define HAVE_PSELECT_PROTO 1
 
 /* Define to 1 if you have the <pthread.h> header file. */
 #define HAVE_PTHREAD_H 1
@@ -152,16 +152,16 @@
 #define HAVE_SNPRINTF_PROTO 1
 
 /* Define to 1 if <net/if_dl.h> defines struct sockaddr_dl */
-/* #undef HAVE_SOCKADDR_DL_STRUCT */
+#define HAVE_SOCKADDR_DL_STRUCT 1
 
 /* define if socket address structures have length fields */
-/* #undef HAVE_SOCKADDR_SA_LEN */
+#define HAVE_SOCKADDR_SA_LEN 1
 
 /* Define to 1 if you have the `sockatmark' function. */
 #define HAVE_SOCKATMARK 1
 
 /* define if sockatmark prototype is in <sys/socket.h> */
-/* #undef HAVE_SOCKATMARK_PROTO */
+#define HAVE_SOCKATMARK_PROTO 1
 
 /* Define to 1 if you have the <stdio.h> header file. */
 #define HAVE_STDIO_H 1
@@ -176,7 +176,7 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the <stropts.h> header file. */
-#define HAVE_STROPTS_H 1
+/* #undef HAVE_STROPTS_H */
 
 /* Define to 1 if `ifr_mtu' is member of `struct ifreq'. */
 #define HAVE_STRUCT_IFREQ_IFR_MTU 1
@@ -185,10 +185,10 @@
 #define HAVE_STRUCT_SOCKADDR_STORAGE 1
 
 /* Define to 1 if you have the <sys/event.h> header file. */
-/* #undef HAVE_SYS_EVENT_H */
+#define HAVE_SYS_EVENT_H 1
 
 /* Define to 1 if you have the <sys/filio.h> header file. */
-/* #undef HAVE_SYS_FILIO_H */
+#define HAVE_SYS_FILIO_H 1
 
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1
@@ -203,7 +203,7 @@
 #define HAVE_SYS_SOCKET_H 1
 
 /* Define to 1 if you have the <sys/sockio.h> header file. */
-/* #undef HAVE_SYS_SOCKIO_H */
+#define HAVE_SYS_SOCKIO_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -245,19 +245,19 @@
 /* #undef HAVE_XTI_INET_H */
 
 /* Define to 1 if the system supports IPv4 */
-#define IPV4 1
+/* #undef IPV4 */
 
 /* Define to 1 if the system supports IPv6 */
-#define IPV6 1
+/* #undef IPV6 */
 
 /* Define to 1 if the system supports IPv4 */
-#define IPv4 1
+/* #undef IPv4 */
 
 /* Define to 1 if the system supports IPv6 */
-#define IPv6 1
+/* #undef IPv6 */
 
 /* Define to 1 if the system supports IP Multicast */
-#define MCAST 1
+/* #undef MCAST */
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT ""
@@ -278,16 +278,16 @@
 /* #undef SA_FAMILY_T */
 
 /* Define to 1 if you have the ANSI C header files. */
-#define STDC_HEADERS 1
+/* #undef STDC_HEADERS */
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
 
 /* Define to 1 if the system supports UNIX domain sockets */
-#define UNIXDOMAIN 1
+/* #undef UNIXDOMAIN */
 
 /* Define to 1 if the system supports UNIX domain sockets */
-#define UNIXdomain 1
+/* #undef UNIXdomain */
 
 /* 16 bit signed type */
 /* #undef int16_t */
@@ -314,7 +314,7 @@
 #define t_scalar_t int32_t
 
 /* unsigned scalar type */
-/* #undef t_uscalar_t */
+#define t_uscalar_t uint32_t
 
 /* 16 bit unsigned type */
 /* #undef uint16_t */
