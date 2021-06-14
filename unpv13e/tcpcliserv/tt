@@ -1,0 +1,87 @@
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address               Foreign Address             State      
+tcp        0      0 *:832                       *:*                         LISTEN      
+tcp        0      0 *:nfs                       *:*                         LISTEN      
+tcp        0      0 *:32771                     *:*                         LISTEN      
+tcp        0      0 *:echo                      *:*                         LISTEN      
+tcp        0      0 *:mysql                     *:*                         LISTEN      
+tcp        0      0 *:876                       *:*                         LISTEN      
+tcp        0      0 *:846                       *:*                         LISTEN      
+tcp        0      0 *:sunrpc                    *:*                         LISTEN      
+tcp        0      0 *:9877                      *:*                         LISTEN      
+tcp        0      0 *:ftp                       *:*                         LISTEN      
+tcp        0      0 localhost.localdomain:ipp   *:*                         LISTEN      
+tcp        0      0 *:klogin                    *:*                         LISTEN      
+tcp        0      0 nueces21000:34934           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:34935           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:32780           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:32778           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:32768           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:32786           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40302           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40401           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40339           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40729           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40734           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40708           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40751           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40750           leto.cs.txstate.edu:ldap    TIME_WAIT   
+tcp        0      0 nueces21000:40458           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40505           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40647           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40688           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:40684           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 nueces21000:38590           leto.cs.txstate.edu:ldap    ESTABLISHED 
+tcp        0      0 *:http                      *:*                         LISTEN      
+tcp        0      0 *:ssh                       *:*                         LISTEN      
+tcp        0      0 nueces21000:ssh             coreduo.cs.txstate.edu:3261 ESTABLISHED 
+tcp        0     52 nueces21000:ssh             itv-2scylg1.its.txstat:4593 ESTABLISHED 
+udp        0      0 *:1024                      *:*                                     
+udp        0      0 *:nfs                       *:*                                     
+udp        0      0 *:829                       *:*                                     
+udp        0      0 *:843                       *:*                                     
+udp        0      0 *:870                       *:*                                     
+udp        0      0 *:rsync                     *:*                                     
+udp        0      0 *:sunrpc                    *:*                                     
+udp        0      0 *:ipp                       *:*                                     
+Active UNIX domain sockets (servers and established)
+Proto RefCnt Flags       Type       State         I-Node Path
+unix  2      [ ACC ]     STREAM     LISTENING     11909  /var/run/dbus/system_bus_socket
+unix  2      [ ACC ]     STREAM     LISTENING     11483  /var/run/acpid.socket
+unix  2      [ ACC ]     STREAM     LISTENING     11734  /tmp/.font-unix/fs7100
+unix  2      [ ACC ]     STREAM     LISTENING     14380  /tmp/.X11-unix/X0
+unix  2      [ ACC ]     STREAM     LISTENING     14269  /tmp/.gdm_socket
+unix  2      [ ACC ]     STREAM     LISTENING     14862  /tmp/mysql.sock
+unix  8      [ ]         DGRAM                    11127  /dev/log
+unix  2      [ ]         DGRAM                    12659  @/var/run/hal/hotplug_socket
+unix  2      [ ACC ]     STREAM     LISTENING     11669  /dev/gpmctl
+unix  2      [ ]         DGRAM                    3852   @udevd
+unix  2      [ ]         DGRAM                    234293 
+unix  3      [ ]         STREAM     CONNECTED     233836 
+unix  3      [ ]         STREAM     CONNECTED     233835 
+unix  3      [ ]         STREAM     CONNECTED     232360 
+unix  3      [ ]         STREAM     CONNECTED     232359 
+unix  3      [ ]         STREAM     CONNECTED     163021 /var/run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     163020 
+unix  3      [ ]         STREAM     CONNECTED     14553  /tmp/.X11-unix/X0
+unix  3      [ ]         STREAM     CONNECTED     14552  
+unix  3      [ ]         STREAM     CONNECTED     14551  /tmp/.X11-unix/X0
+unix  3      [ ]         STREAM     CONNECTED     14550  
+unix  3      [ ]         STREAM     CONNECTED     14525  /tmp/.font-unix/fs7100
+unix  3      [ ]         STREAM     CONNECTED     14524  
+unix  3      [ ]         STREAM     CONNECTED     14529  /tmp/.X11-unix/X0
+unix  3      [ ]         STREAM     CONNECTED     14420  
+unix  3      [ ]         STREAM     CONNECTED     12658  /var/run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     12657  
+unix  3      [ ]         STREAM     CONNECTED     12048  /var/run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     12047  
+unix  2      [ ]         DGRAM                    11928  
+unix  3      [ ]         STREAM     CONNECTED     11917  
+unix  3      [ ]         STREAM     CONNECTED     11916  
+unix  2      [ ]         DGRAM                    11690  
+unix  2      [ ]         DGRAM                    11666  
+unix  2      [ ]         DGRAM                    11649  
+unix  3      [ ]         STREAM     CONNECTED     11340  
+unix  3      [ ]         STREAM     CONNECTED     11339  
+unix  2      [ ]         DGRAM                    11204  
+unix  2      [ ]         DGRAM                    11135  
