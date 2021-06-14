@@ -37,15 +37,19 @@
 #define SA struct sockaddr  //shortens the typcasts of pointer arguments
 
 
-int     Accept(int, SA *, socklen_t *);
-void	Bind(int, const SA *, socklen_t);
-void    Connect(int, const SA *, socklen_t);
-void    err_sys(const char* msg);
-int     Socket(int family, int type, int protocol);
-void    Writen(int fd, void *ptr, size_t nbytes);
-static  ssize_t my_read(int fd, char *ptr);
-ssize_t readline(int fd, void *vptr, size_t maxlen);
-ssize_t readlinebuf(void **vptrptr);
+int             Accept(int, SA *, socklen_t *);
+void	        Bind(int, const SA *, socklen_t);
+void            Connect(int, const SA *, socklen_t);
+void            err_sys(const char* msg);
+void            err_quit(const char* msg);
+void            Shutdown(int fd, int how);
+int             Socket(int family, int type, int protocol);
+void            Writen(int fd, void *ptr, size_t nbytes);
+ssize_t         writen(int fd, const void *vptr, size_t n);
+const char*     Inet_ntop(int family, const void *addrptr, char *strptr, size_t len);
+static          ssize_t my_read(int fd, char *ptr);
+ssize_t         readline(int fd, void *vptr, size_t maxlen);
+ssize_t         readlinebuf(void **vptrptr);
 
 static int read_cnt;
 static char *read_ptr;
@@ -94,6 +98,30 @@ void Writen(int fd, void *ptr, size_t nbytes)
 }
 
 
+ssize_t writen(int fd, const void *vptr, size_t n)		/* Write "n" bytes to a descriptor. */
+{
+    size_t		nleft;
+    ssize_t		nwritten;
+    const char	*ptr;
+
+    ptr = vptr;
+    nleft = n;
+    while (nleft > 0) {
+        if ( (nwritten = write(fd, ptr, nleft)) <= 0) {
+            if (nwritten < 0 && errno == EINTR)
+                nwritten = 0;		/* and call write() again */
+            else
+                return(-1);			/* error */
+        }
+
+        nleft -= nwritten;
+        ptr   += nwritten;
+    }
+    return(n);
+}
+/* end writen */
+
+
 static ssize_t my_read(int fd, char *ptr)
 {
     if (read_cnt <= 0) {
@@ -111,6 +139,7 @@ static ssize_t my_read(int fd, char *ptr)
     *ptr = *read_ptr++;
     return (1);
 }
+
 
 ssize_t readline(int fd, void *vptr, size_t maxlen)
 {
@@ -143,6 +172,19 @@ ssize_t readlinebuf(void **vptrptr)
     return (read_cnt);
 }
 
+
+const char * Inet_ntop(int family, const void *addrptr, char *strptr, size_t len)
+{
+    const char	*ptr;
+
+    if (strptr == NULL)		/* check for old code */
+        err_quit("NULL 3rd argument to inet_ntop");
+    if ( (ptr = inet_ntop(family, addrptr, strptr, len)) == NULL)
+        err_sys("inet_ntop error");		/* sets errno */
+    return(ptr);
+}
+
+
 /* Fatal error related to system call
  * Print message and terminate */
 
@@ -150,6 +192,20 @@ void err_sys(const char *msg)
 {
     perror(msg);
     exit(1);
+}
+
+
+void err_quit(const char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
+
+void Shutdown(int fd, int how)
+{
+    if (shutdown(fd, how) < 0)
+        err_sys("shutdown error");
 }
 
 #endif  //UNP_H
