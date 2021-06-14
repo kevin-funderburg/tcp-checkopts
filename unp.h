@@ -30,6 +30,7 @@
 #include    <sys/select.h>
 #include    <stdbool.h>
 
+#define LISTENQ 5
 #define SERV_PORT 9877
 #define MAXLINE 4096
 
