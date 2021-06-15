@@ -18,7 +18,6 @@ main(int argc, char **argv)
 		memcpy(sin, ifi->ifi_addr, sizeof(struct sockaddr_in));
 
 		if (ioctl(sockfd, SIOCGARP, &arpreq) < 0) {
-			printf ("errno=%d\n", errno);
 			err_ret("ioctl SIOCGARP");
 			continue;
 		}

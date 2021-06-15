@@ -1,5 +1,5 @@
 #include	"unpthread.h"
-#include	<pthread.h>		/* Solaris threads */
+#include	<thread.h>		/* Solaris threads */
 
 #define	MAXFILES	20
 #define	SERV		"80"	/* port number or service name */

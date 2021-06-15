@@ -1,6 +1,6 @@
 /* include web1 */
 #include	"unpthread.h"
-#include	<pthread.h>		/* Solaris threads */
+#include	<thread.h>		/* Solaris threads */
 
 #define	MAXFILES	20
 #define	SERV		"80"	/* port number or service name */
@@ -65,7 +65,7 @@ main(int argc, char **argv)
 			nlefttoconn--;
 		}
 
-		if ( (n = pthread_join(&tid, (void **) &fptr)) != 0)
+		if ( (n = thr_join(0, &tid, (void **) &fptr)) != 0)
 			errno = n, err_sys("thr_join error");
 
 		nconn--;

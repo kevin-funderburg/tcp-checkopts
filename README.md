@@ -2,13 +2,22 @@
 
 <!-- summary -->
 
-## Anout
+## About
 
 <!-- more detail -->
 
 ## Configuration
 
-<!-- how to set up -->
+To compile, navigate to `unpv13e/tcpcliserv`
+
+### Make commands
+
+```shell
+make        # compile and create executables
+make clean  # reset executables and object files
+```
+
+Once compiled, begin server with `./checkoptsserv` then the client with `./checkoptscli 127.0.0.1`.
 
 ## Licensing & thanks
 

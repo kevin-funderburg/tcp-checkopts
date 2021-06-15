@@ -1,7 +1,4 @@
 /* include nonb1 */
-
-#define VOL2 1
-
 #include	"unp.h"
 
 void

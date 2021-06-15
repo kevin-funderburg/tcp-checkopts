@@ -3,8 +3,6 @@
 #include	"unp.h"
 #include	<netinet/tcp.h>		/* for TCP_xxx defines */
 
-#define SO_USELOOPBACK 100
-
 union val {
   int				i_val;
   long				l_val;
@@ -46,8 +44,6 @@ struct sock_opts {
 	{ "SO_USELOOPBACK",		SOL_SOCKET,	SO_USELOOPBACK,	sock_str_flag },
 	{ "IP_TOS",				IPPROTO_IP,	IP_TOS,			sock_str_int },
 	{ "IP_TTL",				IPPROTO_IP,	IP_TTL,			sock_str_int },
-	{ "IP_RECVDSTADDR",				IPPROTO_IP,	IP_RECVDSTADDR,			sock_str_int },
-	{ "IP_RECVIF",				IPPROTO_IP,	IP_RECVIF,			sock_str_int },
 #ifdef	IPV6_DONTFRAG
 	{ "IPV6_DONTFRAG",		IPPROTO_IPV6,IPV6_DONTFRAG,	sock_str_flag },
 #else

@@ -1,4 +1,4 @@
- /* include readline */
+/* include readline */
 #include	"unp.h"
 
 static int	read_cnt;
