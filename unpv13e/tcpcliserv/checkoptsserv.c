@@ -141,34 +141,80 @@ sock_str_timeval(union val *ptr, int len)
 	return(strres);
 }
 
+// int
+// main(int argc, char **argv)
+// {
+// 	int					listenfd, connfd;
+// 	pid_t				childpid;
+// 	socklen_t			clilen;
+// 	struct sockaddr_in	cliaddr, servaddr;
+// 
+// 	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+// 
+// 	bzero(&servaddr, sizeof(servaddr));
+// 	servaddr.sin_family      = AF_INET;
+// 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+// 	servaddr.sin_port        = htons(SERV_PORT);
+// 
+// 	Bind(listenfd, (SA *) &servaddr, sizeof(servaddr));
+// 
+// 	Listen(listenfd, LISTENQ);
+// 
+// 	for ( ; ; ) {
+// 		clilen = sizeof(cliaddr);
+// 		connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
+// 
+// 		if ( (childpid = Fork()) == 0) {	/* child process */
+// 			Close(listenfd);	/* close listening socket */
+// 			str_echo(connfd);	/* process the request */
+// 			exit(0);
+// 		}
+// 		Close(connfd);			/* parent closes connected socket */
+// 	}
+// }
+
+
 int
 main(int argc, char **argv)
 {
-	int					listenfd, connfd;
-	pid_t				childpid;
-	socklen_t			clilen;
-	struct sockaddr_in	cliaddr, servaddr;
+	int					fd;
+	socklen_t			len;
+	struct sock_opts	*ptr;
 
-	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
+		printf("%s: ", ptr->opt_str);
+		if (ptr->opt_val_str == NULL)
+			printf("(undefined)\n");
+		else {
+			switch(ptr->opt_level) {
+			case SOL_SOCKET:
+			case IPPROTO_IP:
+			case IPPROTO_TCP:
+				fd = Socket(AF_INET, SOCK_STREAM, 0);
+				break;
+#ifdef	IPV6
+			case IPPROTO_IPV6:
+				fd = Socket(AF_INET6, SOCK_STREAM, 0);
+				break;
+#endif
+#ifdef	IPPROTO_SCTP
+			case IPPROTO_SCTP:
+				fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
+				break;
+#endif
+			default:
+				err_quit("Can't create fd for level %d\n", ptr->opt_level);
+			}
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family      = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port        = htons(SERV_PORT);
-
-	Bind(listenfd, (SA *) &servaddr, sizeof(servaddr));
-
-	Listen(listenfd, LISTENQ);
-
-	for ( ; ; ) {
-		clilen = sizeof(cliaddr);
-		connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
-
-		if ( (childpid = Fork()) == 0) {	/* child process */
-			Close(listenfd);	/* close listening socket */
-			str_echo(connfd);	/* process the request */
-			exit(0);
+			len = sizeof(val);
+			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
+						   &val, &len) == -1) {
+				err_ret("getsockopt error");
+			} else {
+				printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
+			}
+			close(fd);
 		}
-		Close(connfd);			/* parent closes connected socket */
 	}
+	exit(0);
 }
