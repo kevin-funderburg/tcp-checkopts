@@ -1,15 +1,15 @@
 include ../Make.defines
 
-PROGS = checkoptscli tcpcli01 tcpcli04 tcpcli05 tcpcli06 \
+PROGS =	checkoptscli tcpcli01 tcpcli04 tcpcli05 tcpcli06 \
 		tcpcli07 tcpcli08 tcpcli09 tcpcli10 \
 		checkoptsserv tcpserv01 tcpserv02 tcpserv03 tcpserv04 \
 		tcpserv08 tcpserv09 tcpservselect01 tcpservpoll01 tsigpipe
 
 all:	${PROGS}
 
-checkoptscli:	checkoptscli.o
+checkoptscli: checkoptscli.o
 		${CC} ${CFLAGS} -o $@ checkoptscli.o ${LIBS}
-
+		
 tcpcli01:	tcpcli01.o
 		${CC} ${CFLAGS} -o $@ tcpcli01.o ${LIBS}
 
@@ -37,7 +37,7 @@ tcpcli10:	tcpcli10.o
 tcpcli11:	tcpcli11.o str_cli11.o
 		${CC} ${CFLAGS} -o $@ tcpcli11.o str_cli11.o ${LIBS}
 
-checkoptsserv:	checkoptsserv.o
+checkoptsserv: checkoptsserv.o
 		${CC} ${CFLAGS} -o $@ checkoptsserv.o ${LIBS}
 
 tcpserv01:	tcpserv01.o
