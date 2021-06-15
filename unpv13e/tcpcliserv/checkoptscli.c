@@ -8,7 +8,10 @@ union val {
   struct timeval	timeval_val;
 } val;
 
-
+static char *sock_str_flag(union val *, int);
+static char *sock_str_int(union val *, int);
+static char *sock_str_linger(union val *, int);
+static char *sock_str_timeval(union val *, int);
 
 struct sock_opts {
   const char	   *opt_str;
@@ -78,6 +81,7 @@ struct sock_opts {
 #endif
 	{ NULL,					0,			0,				NULL }
 };
+
 
 
 int
