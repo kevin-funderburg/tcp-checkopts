@@ -1,6 +1,10 @@
 #include	"unp.h"
 #include	<netinet/tcp.h>		/* for TCP_xxx defines */
 
+#define ZEUS "147.26.231.156"
+#define EROS "147.26.231.153"
+#define LOCALHOST "127.0.0.1"
+
 union val {
   int				i_val;
   long				l_val;
@@ -12,6 +16,7 @@ static char	*sock_str_flag(union val *, int);
 static char	*sock_str_int(union val *, int);
 static char	*sock_str_linger(union val *, int);
 static char	*sock_str_timeval(union val *, int);
+void reply(int sockfd);
 
 struct sock_opts {
   const char	   *opt_str;
@@ -141,80 +146,178 @@ sock_str_timeval(union val *ptr, int len)
 	return(strres);
 }
 
-// int
-// main(int argc, char **argv)
-// {
-// 	int					listenfd, connfd;
-// 	pid_t				childpid;
-// 	socklen_t			clilen;
-// 	struct sockaddr_in	cliaddr, servaddr;
-// 
-// 	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
-// 
-// 	bzero(&servaddr, sizeof(servaddr));
-// 	servaddr.sin_family      = AF_INET;
-// 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-// 	servaddr.sin_port        = htons(SERV_PORT);
-// 
-// 	Bind(listenfd, (SA *) &servaddr, sizeof(servaddr));
-// 
-// 	Listen(listenfd, LISTENQ);
-// 
-// 	for ( ; ; ) {
-// 		clilen = sizeof(cliaddr);
-// 		connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
-// 
-// 		if ( (childpid = Fork()) == 0) {	/* child process */
-// 			Close(listenfd);	/* close listening socket */
-// 			str_echo(connfd);	/* process the request */
-// 			exit(0);
-// 		}
-// 		Close(connfd);			/* parent closes connected socket */
-// 	}
-// }
 
-
-int
-main(int argc, char **argv)
+void reply(int sockfd)
 {
-	int					fd;
-	socklen_t			len;
-	struct sock_opts	*ptr;
+    printf("[SERVER]    ***reply()***\n");
+    ssize_t n;
+    char    buf[MAXLINE];
+    //setopts(sockfd);
 
-	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
-		printf("%s: ", ptr->opt_str);
-		if (ptr->opt_val_str == NULL)
-			printf("(undefined)\n");
-		else {
-			switch(ptr->opt_level) {
-			case SOL_SOCKET:
-			case IPPROTO_IP:
-			case IPPROTO_TCP:
-				fd = Socket(AF_INET, SOCK_STREAM, 0);
-				break;
-#ifdef	IPV6
-			case IPPROTO_IPV6:
-				fd = Socket(AF_INET6, SOCK_STREAM, 0);
-				break;
-#endif
-#ifdef	IPPROTO_SCTP
-			case IPPROTO_SCTP:
-				fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
-				break;
-#endif
-			default:
-				err_quit("Can't create fd for level %d\n", ptr->opt_level);
-			}
+    char *pt;
+    printf("buf:\n");
+    again:
+        bzero(buf, sizeof(buf));
+        while ( (n = read(sockfd, buf, MAXLINE)) > 0) {
+            //printf("%s", buf);
+            char* line = strtok(buf, "\n");
+            while(line) {
+                printf("%s\n", line);
+                setopts(sockfd, line);
+        //        pt = strtok(line, ",");
+        //        printf("parsed strings:");
+        //        while (pt != NULL) {
+        //            printf("%s\n", pt);
+        //            pt = strtok(NULL, ",");
+        //        }
+                line = strtok(NULL, "\n");
+            }
+        }
 
-			len = sizeof(val);
-			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
-						   &val, &len) == -1) {
-				err_ret("getsockopt error");
-			} else {
-				printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
-			}
-			close(fd);
-		}
-	}
-	exit(0);
+        if (n < 0 && errno == EINTR)
+            goto again;
+        else if (n < 0)
+            err_sys("reply: read error");
 }
+
+
+void setopts(int sockfd, char* line)
+{
+    printf("...setopts()...\n");
+            
+
+    int fd;
+    socklen_t len;
+    struct sock_opts *ptr;
+    char* opt, pt;// = "SO_DEBUG";
+    int val_cli;
+
+    pt = strtok(line, ",");
+    printf("parsed strings:");
+    while (pt != NULL) {
+        printf("%s\n", pt);
+        pt = strtok(NULL, ",");
+    }
+ 
+    for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
+        //printf("%s: ", ptr->opt_str);
+        if (ptr->opt_val_str == NULL)
+            printf("(undefined)\n");
+        else {
+            switch(ptr->opt_level) {
+            case SOL_SOCKET:
+            case IPPROTO_IP:
+            case IPPROTO_TCP:
+                fd = Socket(AF_INET, SOCK_STREAM, 0);
+                break;
+#ifdef  IPV6
+            case IPPROTO_IPV6:
+                fd = Socket(AF_INET6, SOCK_STREAM, 0);
+                break;
+#endif
+#ifdef  IPPROTO_SCTP
+            case IPPROTO_SCTP:
+                fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
+                break;
+#endif
+            default:
+                err_quit("Can't create fd for level %d\n", ptr->opt_level);
+            }
+                                                        
+            len = sizeof(val);
+            if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
+                           &val, &len) == -1) {
+                err_ret("getsockopt error");
+            } else {
+                if (strcmp(ptr->opt_str, opt) == 0) {
+                    printf("option found: %s\n", opt);
+                    //printf("option val: %d\n", ptr->);
+                    //if (ptr->
+                }
+                //printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
+            }
+            close(fd);
+        }
+    }
+}
+
+ int
+ main(int argc, char **argv)
+ {
+    printf("...starting server...\n");
+
+ 	int					listenfd, connfd;
+ 	pid_t				childpid;
+ 	socklen_t			clilen;
+ 	struct sockaddr_in	cliaddr, servaddr;
+ 
+ 	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+ 
+ 	bzero(&servaddr, sizeof(servaddr));
+ 	servaddr.sin_family      = AF_INET;
+ 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+ 	servaddr.sin_port        = htons(SERV_PORT);
+ 
+ 	Bind(listenfd, (SA *) &servaddr, sizeof(servaddr));
+ 
+ 	Listen(listenfd, LISTENQ);
+ 
+ 	for ( ; ; ) {
+ 		clilen = sizeof(cliaddr);
+ 		connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
+ 
+ 		if ( (childpid = Fork()) == 0) {	/* child process */
+ 			Close(listenfd);	/* close listening socket */
+ 			//str_echo(connfd);	/* process the request */
+            reply(connfd);
+ 			exit(0);
+ 		}
+ 		Close(connfd);			/* parent closes connected socket */
+ 	}
+}
+
+
+//int
+//main(int argc, char **argv)
+//{
+//	int					fd;
+//	socklen_t			len;
+//	struct sock_opts	*ptr;
+//
+//	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
+//		printf("%s: ", ptr->opt_str);
+//		if (ptr->opt_val_str == NULL)
+//			printf("(undefined)\n");
+//		else {
+//			switch(ptr->opt_level) {
+//			case SOL_SOCKET:
+//			case IPPROTO_IP:
+//			case IPPROTO_TCP:
+//				fd = Socket(AF_INET, SOCK_STREAM, 0);
+//				break;
+//#ifdef	IPV6
+//			case IPPROTO_IPV6:
+//				fd = Socket(AF_INET6, SOCK_STREAM, 0);
+//				break;
+//#endif
+//#ifdef	IPPROTO_SCTP
+//			case IPPROTO_SCTP:
+//				fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
+//				break;
+//#endif
+//			default:
+//				err_quit("Can't create fd for level %d\n", ptr->opt_level);
+//			}
+//
+//			len = sizeof(val);
+//			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
+//						   &val, &len) == -1) {
+//				err_ret("getsockopt error");
+//			} else {
+//				printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
+//			}
+//			close(fd);
+//		}
+//	}
+//	exit(0);
+//}

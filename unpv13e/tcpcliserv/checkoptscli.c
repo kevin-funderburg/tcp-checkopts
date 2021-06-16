@@ -1,6 +1,10 @@
 #include	"unp.h"
 #include	<netinet/tcp.h>		/* for TCP_xxx defines */
 
+#define ZEUS "147.26.231.156"
+#define EROS "147.26.231.153"
+#define LOCALHOST "127.0.0.1"
+
 union val {
   int				i_val;
   long				l_val;
@@ -168,12 +172,33 @@ sock_str_timeval(union val *ptr, int len)
 int
 main(int argc, char **argv)
 {
+    printf("...starting client...\n");
+    
 	int					fd;
 	socklen_t			len;
 	struct sock_opts	*ptr;
+ 	int					sockfd;
+ 	struct sockaddr_in	servaddr;
+    char sendline[MAXLINE], recvline[MAXLINE];
+    int                 sockopt;
+
+ 	if (argc != 2)
+ 		err_quit("usage: tcpcli <IPaddress>");
+ 
+ 	sockfd = Socket(AF_INET, SOCK_STREAM, 0);
+
+ 	bzero(&servaddr, sizeof(servaddr));
+ 	servaddr.sin_family = AF_INET;
+ 	servaddr.sin_port = htons(SERV_PORT);
+ 	Inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
+ 
+ 	Connect(sockfd, (SA *) &servaddr, sizeof(servaddr));
+
+    //strcpy(sendline, "testing a send line\n");
 
 	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
-		printf("%s: ", ptr->opt_str);
+        //bzero(sendline, sizeof(sendline));
+//		printf("[CLIENT] %s: ", ptr->opt_str);
 		if (ptr->opt_val_str == NULL)
 			printf("(undefined)\n");
 		else {
@@ -198,6 +223,9 @@ main(int argc, char **argv)
 			}
 
 			len = sizeof(val);
+            //sockopt = getsockopt(fd, ptr->opt_level, ptr->opt_name,
+			//			   &val, &len);
+
 			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
 						   &val, &len) == -1) {
 				err_ret("getsockopt error");
@@ -206,6 +234,18 @@ main(int argc, char **argv)
 			}
 			close(fd);
 		}
+
+        //convert value of ptr to a string
+        int length = snprintf( NULL, 0, ",%d", val);
+        char* val_str = malloc(length + 1);
+        snprintf(val_str, length + 1, ",%d", val);
+        //concat ptr name and ptr value and separte with a comma
+        strcpy(sendline, ptr->opt_str);
+        strcat(sendline, val_str);
+        strcat(sendline, "\n");
+        //printf("sendline: %s", sendline);
+        Writen(sockfd, sendline, strlen(sendline)); //send line to server
+        free(val_str);
 	}
 	exit(0);
 }
