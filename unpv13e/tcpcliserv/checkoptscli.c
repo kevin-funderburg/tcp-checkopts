@@ -243,7 +243,7 @@ main(int argc, char **argv)
         strcpy(sendline, ptr->opt_str);
         strcat(sendline, val_str);
         strcat(sendline, "\n");
-        //printf("sendline: %s", sendline);
+        printf("sendline: %s", sendline);
         Writen(sockfd, sendline, strlen(sendline)); //send line to server
         free(val_str);
 	}

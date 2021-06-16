@@ -152,36 +152,40 @@ void reply(int sockfd)
     printf("[SERVER]    ***reply()***\n");
     ssize_t n;
     char    buf[MAXLINE];
-    //setopts(sockfd);
+    setopts(sockfd);
+    //char* cliOpts[30][30];
+    //char *pt;
+    //printf("buf:\n");
+    //int x = 0;
+    //again:
+    //    bzero(buf, sizeof(buf));
+    //    while ( (n = read(sockfd, buf, MAXLINE)) > 0) {
+    //        //printf("%s", buf);
+    //        char* line = strtok(buf, "\n");
+    //        while(line) {
+    //            printf("%s\n", line);
+    //            strcpy(cliOpts[x], line);
+    //           // setopts(sockfd, line);
+    //    //        pt = strtok(line, ",");
+    //    //        printf("parsed strings:");
+    //    //        while (pt != NULL) {
+    //    //            printf("%s\n", pt);
+    //    //            pt = strtok(NULL, ",");
+    //    //        }
+    //            line = strtok(NULL, "\n");
+    //            x++;
+    //        }
+    //    }
 
-    char *pt;
-    printf("buf:\n");
-    again:
-        bzero(buf, sizeof(buf));
-        while ( (n = read(sockfd, buf, MAXLINE)) > 0) {
-            //printf("%s", buf);
-            char* line = strtok(buf, "\n");
-            while(line) {
-                printf("%s\n", line);
-                setopts(sockfd, line);
-        //        pt = strtok(line, ",");
-        //        printf("parsed strings:");
-        //        while (pt != NULL) {
-        //            printf("%s\n", pt);
-        //            pt = strtok(NULL, ",");
-        //        }
-                line = strtok(NULL, "\n");
-            }
-        }
-
-        if (n < 0 && errno == EINTR)
-            goto again;
-        else if (n < 0)
-            err_sys("reply: read error");
+    //    if (n < 0 && errno == EINTR)
+    //        goto again;
+    //    else if (n < 0)
+    //        err_sys("reply: read error");
 }
 
 
-void setopts(int sockfd, char* line)
+//void setopts(int sockfd, char* line)
+void setopts(int sockfd)
 {
     printf("...setopts()...\n");
             
@@ -189,16 +193,39 @@ void setopts(int sockfd, char* line)
     int fd;
     socklen_t len;
     struct sock_opts *ptr;
-    char* opt, pt;// = "SO_DEBUG";
-    int val_cli;
+    //char* opt, pt;// = "SO_DEBUG";
+    char* pt;
+    char line[] = "SO_DEBUG,0";
+    char* optName;
+    int cliVal, newVal;
 
+    printf("line: %s\n", line);
+    int x = 0;
     pt = strtok(line, ",");
-    printf("parsed strings:");
+    //printf("==>BREAKPOINT==>\n");
+    //printf("parsed strings:");
     while (pt != NULL) {
         printf("%s\n", pt);
+        if (x == 0)
+            optName = pt;
+        else
+            cliVal = atoi(pt);
+
         pt = strtok(NULL, ",");
+        x++;
     }
  
+    //printf("optName: %s\noptVal: %d", optName, optVal);
+
+    //set new value for server option
+    switch (cliVal) {
+        case 0: newVal = 1; break;
+        case 1: newVal = 0; break;
+        default: newVal = cliVal * 2;
+    }
+
+    //printf("newVal: %d\n", newVal);
+
     for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
         //printf("%s: ", ptr->opt_str);
         if (ptr->opt_val_str == NULL)
@@ -229,8 +256,11 @@ void setopts(int sockfd, char* line)
                            &val, &len) == -1) {
                 err_ret("getsockopt error");
             } else {
-                if (strcmp(ptr->opt_str, opt) == 0) {
-                    printf("option found: %s\n", opt);
+                if (strcmp(ptr->opt_str, optName) == 0) {
+                    printf("option found: %s\n", optName);
+                    len = sizeof(newVal);
+
+                    setsockopt(fd, ptr->opt_level, ptr->opt_name, &newVal, &len);
                     //printf("option val: %d\n", ptr->);
                     //if (ptr->
                 }
@@ -239,11 +269,58 @@ void setopts(int sockfd, char* line)
             close(fd);
         }
     }
+    printAll(fd);
 }
 
- int
- main(int argc, char **argv)
- {
+
+void printAll(int sockfd)
+{
+    printf("...printAll()...\n");
+            
+    int fd;
+    socklen_t len;
+    struct sock_opts *ptr;
+
+    for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
+        printf("%s: ", ptr->opt_str);
+        if (ptr->opt_val_str == NULL)
+            printf("(undefined)\n");
+        else {
+            switch(ptr->opt_level) {
+            case SOL_SOCKET:
+            case IPPROTO_IP:
+            case IPPROTO_TCP:
+                fd = Socket(AF_INET, SOCK_STREAM, 0);
+                break;
+#ifdef  IPV6
+            case IPPROTO_IPV6:
+                fd = Socket(AF_INET6, SOCK_STREAM, 0);
+                break;
+#endif
+#ifdef  IPPROTO_SCTP
+            case IPPROTO_SCTP:
+                fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
+                break;
+#endif
+            default:
+                err_quit("Can't create fd for level %d\n", ptr->opt_level);
+            }
+                                                        
+            len = sizeof(val);
+            if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
+                           &val, &len) == -1) {
+                err_ret("getsockopt error");
+            } else {
+               printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
+            }
+            close(fd);
+        }
+    }
+}
+
+int
+main(int argc, char **argv)
+{
     printf("...starting server...\n");
 
  	int					listenfd, connfd;
