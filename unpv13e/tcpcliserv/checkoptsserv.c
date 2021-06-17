@@ -189,15 +189,15 @@ void setopts(int sockfd)
 {
     printf("...setopts()...\n");
             
-
+    printf("sockfd: %d\n", sockfd);
     int fd;
     socklen_t len;
     struct sock_opts *ptr;
     //char* opt, pt;// = "SO_DEBUG";
     char* pt;
-    char line[] = "SO_DEBUG,0";
+    char line[] = "SO_DEBUG,0,1";
     char* optName;
-    int cliVal, newVal;
+    int cliVal, newVal, cliLvl;
 
     printf("line: %s\n", line);
     int x = 0;
@@ -206,16 +206,16 @@ void setopts(int sockfd)
     //printf("parsed strings:");
     while (pt != NULL) {
         printf("%s\n", pt);
-        if (x == 0)
-            optName = pt;
-        else
-            cliVal = atoi(pt);
-
-        pt = strtok(NULL, ",");
+        switch(x) {
+            case 0: optName = pt; break;
+            case 1: cliVal = atoi(pt); break;
+            case 2: cliLvl = atoi(pt); break;
+        }
+       pt = strtok(NULL, ",");
         x++;
     }
  
-    //printf("optName: %s\noptVal: %d", optName, optVal);
+    printf("optName: %s\ncliVal: %d\ncliLvel: %d\n", optName, cliVal, cliLvl);
 
     //set new value for server option
     switch (cliVal) {
@@ -224,52 +224,34 @@ void setopts(int sockfd)
         default: newVal = cliVal * 2;
     }
 
-    //printf("newVal: %d\n", newVal);
-
-    for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
-        //printf("%s: ", ptr->opt_str);
-        if (ptr->opt_val_str == NULL)
-            printf("(undefined)\n");
-        else {
-            switch(ptr->opt_level) {
-            case SOL_SOCKET:
-            case IPPROTO_IP:
-            case IPPROTO_TCP:
-                fd = Socket(AF_INET, SOCK_STREAM, 0);
-                break;
+   switch(cliLvl)
+    {
+        case SOL_SOCKET:
+        case IPPROTO_IP:
+        case IPPROTO_TCP:
+            fd = Socket(AF_INET, SOCK_STREAM, 0);
+            break;
 #ifdef  IPV6
-            case IPPROTO_IPV6:
-                fd = Socket(AF_INET6, SOCK_STREAM, 0);
-                break;
+        case IPPROTO_IPV6:
+            fd = Socket(AF_INET6, SOCK_STREAM, 0);
+            break;
 #endif
 #ifdef  IPPROTO_SCTP
-            case IPPROTO_SCTP:
-                fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
-                break;
+        case IPPROTO_SCTP:
+            fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
+            break;
 #endif
-            default:
-                err_quit("Can't create fd for level %d\n", ptr->opt_level);
-            }
-                                                        
-            len = sizeof(val);
-            if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
-                           &val, &len) == -1) {
-                err_ret("getsockopt error");
-            } else {
-                if (strcmp(ptr->opt_str, optName) == 0) {
-                    printf("option found: %s\n", optName);
-                    len = sizeof(newVal);
-
-                    setsockopt(fd, ptr->opt_level, ptr->opt_name, &newVal, &len);
-                    //printf("option val: %d\n", ptr->);
-                    //if (ptr->
-                }
-                //printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
-            }
-            close(fd);
-        }
+        default:
+            err_quit("Can't create fd for level %d\n", ptr->opt_level);
     }
-    printAll(fd);
+                                                        
+    len = sizeof(newVal);
+    if (setsockopt(fd, cliLvl, optName, &newVal, len) == -1) {
+        err_ret("setsockopt error");
+    } else {
+        printf("sockopt %s set to %d\n", optName, newVal);
+    }
+   printAll(fd);
 }
 
 

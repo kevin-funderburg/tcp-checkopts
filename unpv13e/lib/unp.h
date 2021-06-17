@@ -197,9 +197,9 @@ struct unp_in_pktinfo {
 #define	BUFFSIZE	8192	/* buffer size for reads and writes */
 
 /* Define some port number that can be used for our examples */
-#define	SERV_PORT		10011 			/* TCP and UDP */
+#define	SERV_PORT		8880 			/* TCP and UDP */
 //#define	SERV_PORT		 9877			/* TCP and UDP */
-#define	SERV_PORT_STR	"10011"			/* TCP and UDP */
+#define	SERV_PORT_STR	"8880"			/* TCP and UDP */
 //#define	SERV_PORT_STR	"9877"			/* TCP and UDP */
 #define	UNIXSTR_PATH	"/tmp/unix.str"	/* Unix domain stream */
 #define	UNIXDG_PATH		"/tmp/unix.dg"	/* Unix domain datagram */

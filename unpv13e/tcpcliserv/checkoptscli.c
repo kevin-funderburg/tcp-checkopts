@@ -239,9 +239,15 @@ main(int argc, char **argv)
         int length = snprintf( NULL, 0, ",%d", val);
         char* val_str = malloc(length + 1);
         snprintf(val_str, length + 1, ",%d", val);
+
+        length = snprintf( NULL, 0, ",%d", ptr->opt_level);
+        char* len_str = malloc(length + 1);
+        snprintf(len_str, length + 1, ",%d", ptr->opt_level);
+ 
         //concat ptr name and ptr value and separte with a comma
         strcpy(sendline, ptr->opt_str);
         strcat(sendline, val_str);
+        strcat(sendline, len_str);
         strcat(sendline, "\n");
         printf("sendline: %s", sendline);
         Writen(sockfd, sendline, strlen(sendline)); //send line to server
