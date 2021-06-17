@@ -156,95 +156,75 @@ sock_str_timeval(union val *ptr, int len)
 }
 
 
-void reply(int sockfd)
+void getSetOpts(int sockfd)
 {
-    printf("[SERVER]    ***reply()***\n");
+    printf("...getSetOpts()...\n");
     ssize_t n;
     char    buf[MAXLINE];
-    //setopts(sockfd);
-    char* cliOpts[30][30];
+    socklen_t len;
+    int fd;
+    //char* cliOpts[30][30];
     char *pt;
-    printf("buf:\n");
     int x = 1;
+    char* optStr;
+    int cliVal, newVal, cliLvl, optName;
+//    char line[] = "SO_BROADCAST,0,1,6";
+    printf("buf:\n");
     again:
-        //bzero(buf, sizeof(buf));
-        while ( (n = read(sockfd, buf, MAXLINE)) > 0) {
+
+        while ( (n = read(sockfd, buf, MAXLINE)) > 0)
+        {
             //printf("%s", buf);
-            char* line = strtok(buf, "\n");
-            while(line) {
-                printf("[%d] line: %s\n", x, line);
-                //strcpy(cliOpts[x], line);
-                //setopts(sockfd, line);
+            char* line = strtok(buf, "\n"); //get a line from the buffer
+           
+            while(line)
+            {
+                printf("[%d] RECEIVED FROM CLIENT: %s\n", x, line);
+                int i = 0;
+                pt = strtok(line, ",");
+                while (pt != NULL)  //parse lines by comma delimiter
+                {
+                    //printf("%s\n", pt);
+                    switch(i) {
+                        case 0: optStr = pt; break;
+                        case 1: cliVal = atoi(pt); break;
+                        case 2: cliLvl = atoi(pt); break;
+                        case 3: optName = atoi(pt); break;
+                    }
+                    pt = strtok(NULL, ",");
+                    i++;
+                }
+                //printf("optStr: %s\ncliVal: %d\ncliLvel: %d\noptName: %d\n", optStr, cliVal, cliLvl, optName);
+
+                //set new value for server option
+                switch (cliVal) {
+                    case 0: newVal = 1; break;
+                    case 1: newVal = 0; break;
+                    default: newVal = cliVal * 3;
+                }
+                
+                //set socket option with new value
+                len = sizeof(newVal);
+                if (setsockopt(sockfd, cliLvl, optName, &newVal, len) == -1) {
+                    err_ret("setsockopt error");
+                } else {
+                    printf("sockopt %s set to %d\n", optStr, newVal);
+                }
+                printf("\n");
 
                 line = strtok(NULL, "\n");
                 x++;
             }
-            ///printf("END OF BUF\n");
-            bzero(buf, sizeof(buf));
+            //printf("END OF BUF\n");
+            bzero(buf, sizeof(buf));    //clear buffer so lines aren't truncated
         }
 
         if (n < 0 && errno == EINTR)
             goto again;
         else if (n < 0) {
-            //printAll(sockfd);
             err_sys("reply: read error");
         }
 }
-
-
-void setopts(int sockfd, char* line)
-//void setopts(int sockfd)
-{
-    printf("...setopts()...\n");
-            
-    //printf("sockfd: %d\n", sockfd);
-    int fd, i;
-    socklen_t len;
-    struct sock_opts *ptr;
-    char* pt;
-//    char line[] = "SO_BROADCAST,0,1,6";
-    char* optStr;
-    int cliVal, newVal, cliLvl, optName;
-
-    //i = 0;
-    //printf("line: %s\n", line);
-    int x = 0;
-    pt = strtok(line, ",");
-    printf("==>BREAKPOINT==>\n");
-    //printf("parsed strings:");
-    while (pt != NULL) {
-        //printf("%s\n", pt);
-        switch(x) {
-            //case 0: clientData[i].optStr = pt; break;
-            //case 1: clientData[i].val = atoi(pt); break;
-            //case 2: clientData[i].lvl = atoi(pt); break;
-            //case 3: clientData[i].optName = atoi(pt); break;
-            case 0: optStr = pt; break;
-            case 1: cliVal = atoi(pt); break;
-            case 2: cliLvl = atoi(pt); break;
-            case 3: optName = atoi(pt); break;
-        }
-        pt = strtok(NULL, ",");
-        x++;
-    }
-    //printf("optStr: %s\ncliVal: %d\ncliLvel: %d\noptName: %d\n", optStr, cliVal, cliLvl, optName);
-
-    //set new value for server option
-    switch (cliVal) {
-        case 0: newVal = 1; break;
-        case 1: newVal = 0; break;
-        default: newVal = cliVal * 2;
-    }
-
-    len = sizeof(newVal);
-    if (setsockopt(sockfd, cliLvl, optName, &newVal, len) == -1) {
-        err_ret("setsockopt error");
-    } else {
-        printf("sockopt %s set to %d\n", optStr, newVal);
-    }
-    printf("\n\n");
-}
-
 
 void printAll(int sockfd)
 {
@@ -280,7 +260,7 @@ void printAll(int sockfd)
             }
                                                         
             len = sizeof(val);
-            if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
+            if (getsockopt(sockfd, ptr->opt_level, ptr->opt_name,
                            &val, &len) == -1) {
                 err_ret("getsockopt error");
             } else {
@@ -318,57 +298,11 @@ main(int argc, char **argv)
  
  		if ( (childpid = Fork()) == 0) {	/* child process */
  			Close(listenfd);	/* close listening socket */
- 			//str_echo(connfd);	/* process the request */
-            reply(connfd);
-            //printAll(connfd);
+            getSetOpts(connfd); //get client options and set servers accordingly
+            printAll(connfd);   //print server options
  			exit(0);
  		}
  		Close(connfd);			/* parent closes connected socket */
  	}
 }
 
-
-//int
-//main(int argc, char **argv)
-//{
-//	int					fd;
-//	socklen_t			len;
-//	struct sock_opts	*ptr;
-//
-//	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
-//		printf("%s: ", ptr->opt_str);
-//		if (ptr->opt_val_str == NULL)
-//			printf("(undefined)\n");
-//		else {
-//			switch(ptr->opt_level) {
-//			case SOL_SOCKET:
-//			case IPPROTO_IP:
-//			case IPPROTO_TCP:
-//				fd = Socket(AF_INET, SOCK_STREAM, 0);
-//				break;
-//#ifdef	IPV6
-//			case IPPROTO_IPV6:
-//				fd = Socket(AF_INET6, SOCK_STREAM, 0);
-//				break;
-//#endif
-//#ifdef	IPPROTO_SCTP
-//			case IPPROTO_SCTP:
-//				fd = Socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
-//				break;
-//#endif
-//			default:
-//				err_quit("Can't create fd for level %d\n", ptr->opt_level);
-//			}
-//
-//			len = sizeof(val);
-//			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
-//						   &val, &len) == -1) {
-//				err_ret("getsockopt error");
-//			} else {
-//				printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
-//			}
-//			close(fd);
-//		}
-//	}
-//	exit(0);
-//}

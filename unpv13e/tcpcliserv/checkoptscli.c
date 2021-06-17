@@ -194,14 +194,11 @@ main(int argc, char **argv)
  
  	Connect(sockfd, (SA *) &servaddr, sizeof(servaddr));
 
-    //strcpy(sendline, "testing a send line\n");
-
 	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
-        //bzero(sendline, sizeof(sendline));
-//		printf("[CLIENT] %s: ", ptr->opt_str);
-		if (ptr->opt_val_str == NULL)
-			printf("(undefined)\n");
-		else {
+		if (ptr->opt_val_str == NULL) {
+            printf("");
+			//printf("(undefined)\n");
+        } else {
 			switch(ptr->opt_level) {
 			case SOL_SOCKET:
 			case IPPROTO_IP:
@@ -223,14 +220,15 @@ main(int argc, char **argv)
 			}
 
 			len = sizeof(val);
-            //sockopt = getsockopt(fd, ptr->opt_level, ptr->opt_name,
-			//			   &val, &len);
+            sockopt = getsockopt(fd, ptr->opt_level, ptr->opt_name,
+						   &val, &len);
 
-			if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
+		    if (getsockopt(fd, ptr->opt_level, ptr->opt_name,
 						   &val, &len) == -1) {
 				err_ret("getsockopt error");
 			} else {
-				printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
+                printf("");
+				//printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
 			}
 			close(fd);
 		}
@@ -254,7 +252,7 @@ main(int argc, char **argv)
         strcat(sendline, len_str);
         strcat(sendline, name_str);
         strcat(sendline, "\n");
-        printf("sendline: %s", sendline);
+        printf("SENDING TO SERVER: %s", sendline);
         Writen(sockfd, sendline, strlen(sendline)); //send line to server
         free(val_str);
 	}
