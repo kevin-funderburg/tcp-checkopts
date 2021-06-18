@@ -215,16 +215,16 @@ main(int argc, char **argv)
         int length = snprintf( NULL, 0, ",%d", val);
         char* val_str = malloc(length + 1);
         snprintf(val_str, length + 1, ",%d", val);
-
+        //convert value of length to a string
         length = snprintf( NULL, 0, ",%d", ptr->opt_level);
         char* len_str = malloc(length + 1);
         snprintf(len_str, length + 1, ",%d", ptr->opt_level);
- 
+        //convert value of opt_name to a string
         length = snprintf( NULL, 0, ",%d", ptr->opt_name);
         char* name_str = malloc(length + 1);
         snprintf(name_str, length + 1, ",%d", ptr->opt_name);
        
-        //concat ptr name and ptr value and separte with a comma
+        //concat ptr name, value, length and opt_name and separte with a comma
         strcpy(sendline, ptr->opt_str);
         strcat(sendline, val_str);
         strcat(sendline, len_str);

@@ -298,13 +298,10 @@ main(int argc, char **argv)
  		clilen = sizeof(cliaddr);
  		connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
  
- 		//if ( (childpid = Fork()) == 0) {	/* child process */
- 		//	Close(listenfd);	/* close listening socket */
-            getSetOpts(connfd); //get client options and set servers accordingly
-            printAll(connfd);   //print server options
- 			exit(0);
- 		//}I
+        getSetOpts(connfd); //get client options and set servers accordingly
+        printAll(connfd);   //print server options
  		Close(connfd);			/* parent closes connected socket */
+        exit(0);
  	}
 }
 
