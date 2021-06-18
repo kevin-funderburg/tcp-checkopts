@@ -145,29 +145,6 @@ sock_str_timeval(union val *ptr, int len)
 	return(strres);
 }
 
-// int
-// main(int argc, char **argv)
-// {
-// 	int					sockfd;
-// 	struct sockaddr_in	servaddr;
-// 
-// 	if (argc != 2)
-// 		err_quit("usage: tcpcli <IPaddress>");
-// 
-// 	sockfd = Socket(AF_INET, SOCK_STREAM, 0);
-// 
-// 	bzero(&servaddr, sizeof(servaddr));
-// 	servaddr.sin_family = AF_INET;
-// 	servaddr.sin_port = htons(SERV_PORT);
-// 	Inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
-// 
-// 	Connect(sockfd, (SA *) &servaddr, sizeof(servaddr));
-// 
-// 	str_cli(stdin, sockfd);		/* do it all */
-// 
-// 	exit(0);
-// }
-
 
 int
 main(int argc, char **argv)
@@ -195,9 +172,10 @@ main(int argc, char **argv)
  	Connect(sockfd, (SA *) &servaddr, sizeof(servaddr));
 
 	for (ptr = sock_opts; ptr->opt_str != NULL; ptr++) {
-		if (ptr->opt_val_str == NULL) {
-            printf("");
-			//printf("(undefined)\n");
+        printf("%s: ", ptr->opt_str);
+        if (ptr->opt_val_str == NULL) {
+            //printf("");
+			printf("(undefined)\n");
         } else {
 			switch(ptr->opt_level) {
 			case SOL_SOCKET:
@@ -227,8 +205,8 @@ main(int argc, char **argv)
 						   &val, &len) == -1) {
 				err_ret("getsockopt error");
 			} else {
-                printf("");
-				//printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
+                //printf("");
+				printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
 			}
 			close(fd);
 		}
@@ -252,7 +230,7 @@ main(int argc, char **argv)
         strcat(sendline, len_str);
         strcat(sendline, name_str);
         strcat(sendline, "\n");
-        printf("SENDING TO SERVER: %s", sendline);
+        printf("\tSENDING TO SERVER: %s", sendline);
         Writen(sockfd, sendline, strlen(sendline)); //send line to server
         free(val_str);
 	}

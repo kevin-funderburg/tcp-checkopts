@@ -25,7 +25,7 @@ static char	*sock_str_flag(union val *, int);
 static char	*sock_str_int(union val *, int);
 static char	*sock_str_linger(union val *, int);
 static char	*sock_str_timeval(union val *, int);
-void reply(int sockfd);
+void getSetOpts(int sockfd);
 
 struct sock_opts {
   const char	   *opt_str;
@@ -160,10 +160,10 @@ void getSetOpts(int sockfd)
 {
     printf("...getSetOpts()...\n");
     ssize_t n;
+    char* clientMsg;
     char    buf[MAXLINE];
     socklen_t len;
     int fd;
-    //char* cliOpts[30][30];
     char *pt;
     int x = 1;
     char* optStr;
@@ -180,6 +180,8 @@ void getSetOpts(int sockfd)
             while(line)
             {
                 printf("[%d] RECEIVED FROM CLIENT: %s\n", x, line);
+                //strcpy(clientMsg, line);
+
                 int i = 0;
                 pt = strtok(line, ",");
                 while (pt != NULL)  //parse lines by comma delimiter
@@ -228,7 +230,7 @@ void getSetOpts(int sockfd)
 
 void printAll(int sockfd)
 {
-    printf("...printAll()...\n");
+    printf("...print all socket options...\n");
             
     int fd;
     socklen_t len;
@@ -296,12 +298,12 @@ main(int argc, char **argv)
  		clilen = sizeof(cliaddr);
  		connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
  
- 		if ( (childpid = Fork()) == 0) {	/* child process */
- 			Close(listenfd);	/* close listening socket */
+ 		//if ( (childpid = Fork()) == 0) {	/* child process */
+ 		//	Close(listenfd);	/* close listening socket */
             getSetOpts(connfd); //get client options and set servers accordingly
             printAll(connfd);   //print server options
  			exit(0);
- 		}
+ 		//}I
  		Close(connfd);			/* parent closes connected socket */
  	}
 }
