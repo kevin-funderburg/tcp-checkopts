@@ -1,4 +1,4 @@
-# Advanced Network Programming - Socket Options 
+# Advanced Network Programming - Socket Options
 
 This project is an exploration of socket options within a TCP client/server interface.
 
@@ -40,7 +40,9 @@ Once compiled, begin server with `./checkoptsserv` then the client with `./check
 
 After the client sends the socket options to the server, the server DOES receive and parse them successfully and uses them to set the socket options for the server, but there is an issue with how the server prints the received message. The issue is that the server will print out the received lines randomly, so although it does receive the message, parse them successfully, and set the socket option, not all the lines are printed as LINE RECEIVED. This makes it appear as if the lines are not being received, but when looking at the socket options afterwards, the new socket options are set.
 
-- NOTE: executing the client a few times will yield different printing, so one execution could print 9 lines received and the next could print 28, so I suggest multiple runs for more useful obeservation. 
+- This problem appears to be exacerbated when executing the client from a different server than where the server is executed (ie client on zeus and server on eros).
+
+- NOTE: executing the client a few times will yield different printing, so one execution could print 9 lines received and the next could print 28, so I suggest multiple runs for more useful obeservation.
 
 ## Licensing & thanks
 
